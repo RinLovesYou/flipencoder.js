@@ -6,10 +6,11 @@ const express = require("express");
 const path = require("path");
 const multer = require('multer')
 const ffmpeg = require('ffmpeg')
+const { uuidv4: uuid } = require('uuid')
 
-const storage = multer.diskStorage({
+const uploadStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "tmp/");
+    cb(null, "tmp/inputs");
   },
   filename: (req, file, cb) => {
     cb(
@@ -25,8 +26,9 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.use(express.json());
 
 app.post("/api/upload", async (req, res, next) => {
-  let upload = multer({
-    storage: storage,
+  console.log('Received video file to upload')
+  const upload = multer({
+    storage: uploadStorage,
   }).single("video");
 
   upload(req, res, function (err) {
@@ -40,10 +42,11 @@ app.post("/api/upload", async (req, res, next) => {
     } else if (err) {
       return res.send(err);
     }
+    console.log(`Successfully uploaded video into storage: ${req.file.path}"`);
 
     // Display uploaded image for user validation
     res.send(
-      `You have uploaded this image: <hr/><img src="${req.file.path}" width="500"><hr /><a href="./">Upload another image</a>`
+      `You have uploaded this video: ${req.file.path}"`
     );
   });
 });
