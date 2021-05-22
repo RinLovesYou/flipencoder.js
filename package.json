@@ -21,7 +21,8 @@
   "homepage": "https://github.com/RinLovesYou/flipencoder.js#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "express-promise-router": "^4.1.0"
+    "express-promise-router": "^4.1.0",
+    "multer": "^1.4.2"
   },
   "devDependencies": {
     "dotenv": "^10.0.0",

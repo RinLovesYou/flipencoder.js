@@ -1,3 +1,4 @@
 node_modules
 .env
 fnkey.pem
+*.mp4
