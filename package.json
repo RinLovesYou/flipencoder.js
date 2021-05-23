@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon server/index.js",
     "start": "node server/index.js",
-    "init": "cp .env.config .env"
+    "init": "cp .env.config .env",
+    "clean": "rm -rf tmp/outputs/* && rm tmp/inputs/*.mp4"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,6 @@
   "dependencies": {
     "express": "^4.17.1",
     "express-promise-router": "^4.1.0",
-    "ffmpeg": "0.0.4",
     "multer": "^1.4.2",
     "uuid": "^8.3.2"
   },

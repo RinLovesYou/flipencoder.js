@@ -5,8 +5,15 @@ const { PORT } = process.env;
 const express = require("express");
 const path = require("path");
 const multer = require('multer')
-const ffmpeg = require('ffmpeg')
-const { uuidv4: uuid } = require('uuid')
+const fs = require('fs')
+const { promisify } = require('util')
+const { v4: uuid } = require('uuid')
+
+const mkdir = promisify(fs.mkdir)
+
+const ffmpeg = require('../utils/ffmpeg')
+const outputDirectory = path.join(__dirname, '../tmp/outputs')
+
 
 const uploadStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -31,7 +38,7 @@ app.post("/api/upload", async (req, res, next) => {
     storage: uploadStorage,
   }).single("video");
 
-  upload(req, res, function (err) {
+  upload(req, res, async (err) => {
 
     if (req.fileValidationError) {
       return res.send(req.fileValidationError);
@@ -43,6 +50,23 @@ app.post("/api/upload", async (req, res, next) => {
       return res.send(err);
     }
     console.log(`Successfully uploaded video into storage: ${req.file.path}"`);
+
+    console.log(`Beginning splitting frames from video: ${req.file.path}"`);
+
+
+    const filePath = path.join(__dirname, '../' ,req.file.path)
+    const id = uuid()
+    const outputPath = path.join(outputDirectory, id);
+    const framesOutputPath = path.join(outputPath, "frames");
+    const audioOutputPath = path.join(outputPath, "audio");
+    await mkdir(outputPath)
+    await mkdir(framesOutputPath);
+    await mkdir(audioOutputPath);
+
+    const ffmpegSplitResponse = await ffmpeg.stripFramesFromClip(filePath, framesOutputPath)
+
+
+
 
     // Display uploaded image for user validation
     res.send(
