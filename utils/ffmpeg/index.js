@@ -25,7 +25,7 @@ class FFmpeg {
     return dependencies;
   }
 
-  async stripFramesFromClip(inputPath, outputPath) {
+  async extractFrames(inputPath, outputPath) {
     return new Promise((resolve, reject) => {
       execFile(
         this.ffmpeg,
@@ -45,10 +45,47 @@ class FFmpeg {
       );
     });
   }
+
+  async compressFrames(framesPath) {
+    framesPath = path.join(framesPath, "frame_%d.png");
+    return new Promise((resolve, reject) => {
+      execFile(
+        this.ffmpeg,
+        ["-i", framesPath, "-vf", "scale=256:192", framesPath],
+        (err) => {
+          if (err) {
+            reject(err);
+          }
+          resolve();
+        }
+      );
+    });
+  }
+
+  async extractAudio(inputPath, outputPath) {
+    return new Promise((resolve, reject) => {
+      execFile(
+        this.ffmpeg,
+        [
+          "-i",
+          inputPath,
+          "-ac",
+          "1",
+          "-ar",
+          "8192",
+          path.join(outputPath, "audio.wav"),
+        ],
+        (err) => {
+          if (err) {
+            reject(err);
+          }
+          resolve();
+        }
+      );
+    });
+  }
 }
 
 const ffmpeg = new FFmpeg();
-
-console.log(ffmpeg);
 
 module.exports = ffmpeg;

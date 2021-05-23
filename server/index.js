@@ -63,7 +63,9 @@ app.post("/api/upload", async (req, res, next) => {
     await mkdir(framesOutputPath);
     await mkdir(audioOutputPath);
 
-    const ffmpegSplitResponse = await ffmpeg.stripFramesFromClip(filePath, framesOutputPath)
+    await ffmpeg.extractFrames(filePath, framesOutputPath);
+    await ffmpeg.compressFrames(framesOutputPath)
+    await ffmpeg.extractAudio(filePath, audioOutputPath);
 
 
 
